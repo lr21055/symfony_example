@@ -22,7 +22,7 @@ class Direccion
     #[ORM\Column(length: 255)]
     private ?string $direccion = null;
 
-    #[ORM\ManyToOne(inversedBy: 'direcciones')]
+    #[ORM\ManyToOne(inversedBy: 'direccions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Usuario $usuario = null;
 

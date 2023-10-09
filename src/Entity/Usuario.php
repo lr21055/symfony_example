@@ -22,11 +22,13 @@ class Usuario
     private ?int $edad = null;
 
     #[ORM\OneToMany(mappedBy: 'usuario', targetEntity: Direccion::class, orphanRemoval: true)]
-    private Collection $direcciones;
+    private Collection $direccions;
+
 
     public function __construct()
     {
         $this->direcciones = new ArrayCollection();
+        $this->direccions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,6 +84,36 @@ class Usuario
             // set the owning side to null (unless already changed)
             if ($direccione->getUsuario() === $this) {
                 $direccione->setUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Direccion>
+     */
+    public function getDireccions(): Collection
+    {
+        return $this->direccions;
+    }
+
+    public function addDireccion(Direccion $direccion): static
+    {
+        if (!$this->direccions->contains($direccion)) {
+            $this->direccions->add($direccion);
+            $direccion->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDireccion(Direccion $direccion): static
+    {
+        if ($this->direccions->removeElement($direccion)) {
+            // set the owning side to null (unless already changed)
+            if ($direccion->getUsuario() === $this) {
+                $direccion->setUsuario(null);
             }
         }
 
