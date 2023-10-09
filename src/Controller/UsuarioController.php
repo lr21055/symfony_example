@@ -74,7 +74,6 @@ class UsuarioController extends AbstractController
     if (!$usuario) {
       return $this->json(['error'=>'No se encontro el usuario con id: '.$id], 404);
     }
-
     // Obtiene los valores del body de la request
     $nombre = $request->request->get('nombre');
     $edad = $request->request->get('edad');
