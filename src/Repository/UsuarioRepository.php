@@ -21,6 +21,20 @@ class UsuarioRepository extends ServiceEntityRepository
         parent::__construct($registry, Usuario::class);
     }
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * @return Usuario[] Returns an array of Usuario objects that are older than 35
+     */
+    public function findUsuariosMayoresDe35(): array
+    {
+        return $this->createQueryBuilder('u')
+        ->andWhere('u.edad > 35')
+        ->getQuery()
+        ->getResult();
+    }
+
+>>>>>>> Stashed changes
 //    /**
 //     * @return Usuario[] Returns an array of Usuario objects
 //     */
