@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Direccion;
+use App\Entity\Producto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Utils\Functions;
 
 /**
- * @extends ServiceEntityRepository<Direccion>
+ * @extends ServiceEntityRepository<Producto>
  *
- * @method Direccion|null find($id, $lockMode = null, $lockVersion = null)
- * @method Direccion|null findOneBy(array $criteria, array $orderBy = null)
- * @method Direccion[]    findAll()
- * @method Direccion[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Producto|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Producto|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Producto[]    findAll()
+ * @method Producto[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DireccionRepository extends ServiceEntityRepository
+class ProductoRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Direccion::class);
+        parent::__construct($registry, Producto::class);
     }
 
     public function findAllWithPagination(int $currentPage, int $limit): Paginator
@@ -31,25 +31,26 @@ class DireccionRepository extends ServiceEntityRepository
         $paginator = Functions::paginate($query, $currentPage, $limit);
         return $paginator;
     }
+
 //    /**
-//     * @return Direccion[] Returns an array of Direccion objects
+//     * @return Producto[] Returns an array of Producto objects
 //     */
 //    public function findByExampleField($value): array
 //    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
+//        return $this->createQueryBuilder('p')
+//            ->andWhere('p.exampleField = :val')
 //            ->setParameter('val', $value)
-//            ->orderBy('d.id', 'ASC')
+//            ->orderBy('p.id', 'ASC')
 //            ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Direccion
+//    public function findOneBySomeField($value): ?Producto
 //    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
+//        return $this->createQueryBuilder('p')
+//            ->andWhere('p.exampleField = :val')
 //            ->setParameter('val', $value)
 //            ->getQuery()
 //            ->getOneOrNullResult()

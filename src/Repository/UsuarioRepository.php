@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Usuario;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Utils\Functions;
 
 /**
  * @extends ServiceEntityRepository<Usuario>
@@ -21,28 +23,52 @@ class UsuarioRepository extends ServiceEntityRepository
         parent::__construct($registry, Usuario::class);
     }
 
-//    /**
-//     * @return Usuario[] Returns an array of Usuario objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findUsuariosMayoresDe35(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.edad > 35')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Usuario
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findNombreConA(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere(str_starts_with('u.nombre', 'a'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllWithPagination(int $currentPage, int $limit): Paginator
+    {
+        // Creamos nuestra query
+        $query = $this->createQueryBuilder('p')->getQuery();
+        // Creamos un paginator con la funcion paginate
+        $paginator = Functions::paginate($query, $currentPage, $limit);
+        return $paginator;
+    }
+    //    /**
+    //     * @return Usuario[] Returns an array of Usuario objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('u.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Usuario
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
