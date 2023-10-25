@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Usuario;
+use App\Entity\Direccion;
 use App\Service\GeneradorDeMensajes;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,6 +54,10 @@ class UsuarioController extends AbstractController
     $usuario = new Usuario();
     $usuario->setNombre($request->request->get('nombre'));
     $usuario->setEdad($request->request->get('edad'));
+    $edad = $request->request->get('edad');
+        if($edad <= 0){
+            return $this->json(['error'=>'Edad menor o igual a cero:'.$edad], 422);
+        }
     // Se avisa a Doctrine que queremos guardar un nuevo registro pero no se ejecutan las consultas
     $entityManager->persist($usuario);
 
@@ -72,7 +77,7 @@ class UsuarioController extends AbstractController
   public function readAll(EntityManagerInterface $entityManager, Request $request, GeneradorDeMensajes $generadorDeMensajes): JsonResponse
   {
     $repositorio = $entityManager->getRepository(Usuario::class);
-    $limit = $request->get('limit', 5);
+    $limit = $request->get('limit', 12);
     $page = $request->get('page', 1);
     $usuarios = $repositorio->findAllWithPagination($page, $limit);
     $total = $usuarios->count();
@@ -85,7 +90,25 @@ class UsuarioController extends AbstractController
         'edad' => $usuario->getEdad(),
       ];
     }
-    return $this->json([$generadorDeMensajes->getMensaje("Los usuarios registrados son:", $data), 'total' => $total, 'lastPage' =>$lastPage]);
+
+    $repositorio = $entityManager->getRepository(Direccion::class);
+        $limit1 = $request->get('limit', 5);
+        $page1 = $request->get('page', 1);
+        $direcciones = $repositorio->findAllWithPagination($page1, $limit1);
+        $total1 = $direcciones->count();
+        $lastPage1 = (int) ceil($total1 / $limit1);
+        $data1 = [];
+        foreach ($direcciones as $direccion) {
+            $data1[] = [
+                'departamento' => $direccion->getDepartamento(),
+                'municipio' => $direccion->getMunicipio(),
+                'direccion' => $direccion->getDireccion(),
+                'usuario_id' =>$direccion->getUsuario()->getId(),
+      ];
+  }
+  $data2 = array_merge($data, $data1);
+
+    return $this->json([$generadorDeMensajes->getMensaje("Los usuarios registrados son:", $data2), 'totalUsuarios' => $total, 'totalDirecciones' => $total1, 'lastPageUsuarios' => $lastPage, 'lastPageDirecciones' => $lastPage1]);
   }
 
   #[Route('/{id}', name: 'app_usuario_read_one', methods: ['GET'])]
@@ -97,10 +120,21 @@ class UsuarioController extends AbstractController
       return $this->json(['error' => 'No se encontro el usuario.'], 404);
     }
 
+    $direcciones = $usuario->getDirecciones();
+    $dataDirecciones = [];
+    foreach ($direcciones as $direccion) {
+      $dataDirecciones[] = [
+          'departamento' => $direccion->getDepartamento(),
+          'municipio' => $direccion->getMunicipio(),
+          'direccion' => $direccion->getDireccion(),
+      ];
+  }
+
     $data[] = [
       'id' => $usuario->getId(),
       'nombre' => $usuario->getNombre(),
       'edad' => $usuario->getEdad(),
+      'direcciones' => $dataDirecciones,
     ];
 
     return $this->json([

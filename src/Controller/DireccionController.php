@@ -15,13 +15,21 @@ use Symfony\Component\HttpFoundation\Request;
 class DireccionController extends AbstractController
 {
     #[Route('', name: 'app_usuario_create', methods: ['POST'])]
-    public function create(EntityManagerInterface $entityManager, Request $request, Usuario $usuario1, GeneradorDeMensajes $generadorDeMensajes): JsonResponse
+    public function create(EntityManagerInterface $entityManager, Request $request, GeneradorDeMensajes $generadorDeMensajes): JsonResponse
     {
         $direccion = new Direccion();
         $direccion->setDepartamento($request->request->get('departamento'));
         $direccion->setMunicipio($request->request->get('municipio'));
         $direccion->setDireccion($request->request->get('direccion'));
+        $usuario1 = new Usuario();
+        $usuario1->setNombre($request->request->get('nombre'));
+        $usuario1->setEdad($request->request->get('edad'));
+        $edad = $request->request->get('edad');
+        if($edad <= 0){
+            return $this->json(['error'=>'Edad menor o igual a cero:'.$edad], 422);
+        }
         $direccion->setUsuario($usuario1);
+        $entityManager->persist($usuario1);
         // Se avisa a Doctrine que queremos guardar un nuevo registro pero no se ejecutan las consultas
         $entityManager->persist($direccion);
         // Se ejecutan las consultas SQL para guardar el nuevo registro
@@ -30,7 +38,9 @@ class DireccionController extends AbstractController
             'departamento' => $direccion->getDepartamento(),
             'municipio' => $direccion->getMunicipio(),
             'direccion' => $direccion->getDireccion(),
-            'usuario' => $direccion->getUsuario(),
+            'usuario_id' => $direccion->getUsuario()->getId(),
+            'usuario_nombre' => $direccion->getUsuario()->getNombre(),
+            'usuario_edad' => $direccion->getUsuario()->getEdad(),
         ];
         return $this->json([$generadorDeMensajes->getMensaje("Se guardo la nueva direccion del usuario", $data)
         ]);
@@ -51,7 +61,9 @@ class DireccionController extends AbstractController
                 'departamento' => $direccion->getDepartamento(),
                 'municipio' => $direccion->getMunicipio(),
                 'direccion' => $direccion->getDireccion(),
-                'usuario' => $direccion->getUsuario(),
+                'usuario_id' => $direccion->getUsuario()->getId(),
+                'usuario_nombre' => $direccion->getUsuario()->getNombre(),
+                'usuario_edad' => $direccion->getUsuario()->getEdad(),
             ];
         }
         return $this->json([
@@ -69,7 +81,9 @@ class DireccionController extends AbstractController
             'departamento' => $direccion->getDepartamento(),
             'municipio' => $direccion->getMunicipio(),
             'direccion' => $direccion->getDireccion(),
-            'usuario' => $direccion->getUsuario(),
+            'usuario_id' => $direccion->getUsuario()->getId(),
+            'usuario_nombre' => $direccion->getUsuario()->getNombre(),
+            'usuario_edad' => $direccion->getUsuario()->getEdad(),
         ]);
 
         return $this->json([$generadorDeMensajes->getMensaje("La dirección solicitada es: ", $data)]);
@@ -96,7 +110,7 @@ class DireccionController extends AbstractController
         $direccion->setDepartamento($departamento);
         $direccion->setMunicipio($municipio);
         $direccion->setDireccion($direccion);
-        $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario' => $direccion->getUsuario()];
+        $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario_id' => $direccion->getUsuario()->getId()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
         return $this->json([$generadorDeMensajes->getMensaje("Se actualizaron los datos de la dirección", $data)]);
@@ -113,7 +127,7 @@ class DireccionController extends AbstractController
         }
         // Remueve la entidad
         $entityManager->remove($direccion);
-        $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario' => $direccion->getUsuario()];
+        $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario_id' => $direccion->getUsuario()->getId()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
         return $this->json([$generadorDeMensajes->getMensaje('Se elimino la direccion.', $data)]);

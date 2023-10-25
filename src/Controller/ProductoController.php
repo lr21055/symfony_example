@@ -19,7 +19,15 @@ class ProductoController extends AbstractController
         $producto = new Producto();
         $producto->setNombre($request->request->get('nombre'));
         $producto->setPrecio($request->request->get('precio'));
+        $precio = $request->request->get('precio');
+        if($precio <= 0){
+            return $this->json(['error'=>'Precio igual o menor a cero:'.$precio], 422);
+        }
         $producto->setExistencia($request->request->get('existencia'));
+        $existencia = $request->request->get('existencia');
+        if($existencia <= 0){
+            return $this->json(['error'=>'Existencias iguales o menores a cero:'.$existencia], 422);
+        }
         // Se avisa a Doctrine que queremos guardar un nuevo registro pero no se ejecutan las consultas
         $entityManager->persist($producto);
         // Se ejecutan las consultas SQL para guardar el nuevo registro
