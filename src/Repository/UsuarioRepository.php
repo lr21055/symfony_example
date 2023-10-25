@@ -33,10 +33,10 @@ class UsuarioRepository extends ServiceEntityRepository
 
     public function findNombreConA(): array
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere(str_starts_with('u.nombre', 'a'))
-            ->getQuery()
-            ->getResult();
+        $qb = $this->createQueryBuilder('u');
+        $qb->andWhere($qb->expr()->like('u.nombre', ':patron')) -> setParameter('patron', 'A%');
+        $resultado = $qb->getQuery()->getResult();
+        return $resultado;
     }
 
     public function findAllWithPagination(int $currentPage, int $limit): Paginator

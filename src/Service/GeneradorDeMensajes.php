@@ -2,14 +2,10 @@
 namespace App\Service;
 
 class GeneradorDeMensajes {
-  private const mensajes = [
-    'Buenos dias',
-    'Buenas tardes',
-    'Buenas noches',
-  ];
 
-  public function getMensaje(int $idMensaje): string
-  {
-    return $this::mensajes[$idMensaje];
-  }
+  public function getMensaje($message, $data) {
+    $respuesta = ['message' => $message, 'data' => $data];
+    return $respuesta;
+}
+
 }

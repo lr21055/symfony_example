@@ -24,8 +24,12 @@ class ProductoController extends AbstractController
         $entityManager->persist($producto);
         // Se ejecutan las consultas SQL para guardar el nuevo registro
         $entityManager->flush();
-        return $this->json(['message' => $generadorDeMensajes->getMensaje(0),
-        'data' => 'Se guardo el nuevo producto con nombre ' .$producto->getNombre()
+        $data = [
+            'nombre' => $producto->getNombre(),
+        'precio' => $producto->getPrecio(),
+        'existencia' => $producto->getExistencia(),
+        ];
+        return $this->json([$generadorDeMensajes->getMensaje("Se guardó el nuevo producto con nombre", $data)
         ]);
     }
 
@@ -40,14 +44,12 @@ class ProductoController extends AbstractController
     $data = [];
     foreach ($productos as $producto) {
     $data[] = [
-        'message' => $generadorDeMensajes->getMensaje(0),
-        'data' => "",
         'nombre' => $producto->getNombre(),
         'precio' => $producto->getPrecio(),
         'existencia' => $producto->getExistencia(),
     ];
     }
-    return $this->json(['data' => $data, 'total' => $total, 'lastPage'=>
+    return $this->json([$generadorDeMensajes->getMensaje("Los productos registrados son: ", $data), 'total' => $total, 'lastPage'=>
     $lastPage] );
     }
     
@@ -58,13 +60,12 @@ class ProductoController extends AbstractController
         if(!$producto){
             return $this->json(['error'=>'No se encontro el producto.'],404);
         }
-        return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => "",
+        $data =([
             'nombre' => $producto->getNombre(),
             'precio' => $producto->getPrecio(),
             'existencia' => $producto->getExistencia(),
         ]);
+        return $this->json($generadorDeMensajes->getMensaje("El producto solicitado es: ", $data))
     }
 
     #[Route('/{nombre}', name: 'app_usuario_edit', methods: ['PUT'])]
@@ -95,8 +96,7 @@ class ProductoController extends AbstractController
         $data=['nombre' => $producto->getNombre(), 'precio' => $producto->getPrecio(),'existencias' => $producto->getExistencia()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
-        return $this->json(['message' => $generadorDeMensajes->getMensaje(0),
-        'data'=>'Se actualizaron los datos del producto.', $data]);
+        return $this->json([$generadorDeMensajes->getMensaje("Se actualizaron los datos del producto", $data)]);
     }
 
     #[Route('/{nombre}', name: 'app_usuario_delete', methods: ['DELETE'])]
@@ -113,8 +113,7 @@ class ProductoController extends AbstractController
         $data=['nombre' => $producto->getNombre(), 'precio' => $producto->getPrecio(),'existencias' => $producto->getExistencia()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
-        return $this->json(['message' => $generadorDeMensajes->getMensaje(0),
-        'data'=>'Se elimino el producto.', $data]);
+        return $this->json([$generadorDeMensajes->getMensaje("Se eliminó el producto: ", $data)]);
     }
 }
 
