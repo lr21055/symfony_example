@@ -17,7 +17,7 @@ class Producto
     #[ORM\Column(length: 50)]
     private ?string $nombre = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 2, scale: 2)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $precio = null;
 
     #[ORM\Column]

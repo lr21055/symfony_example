@@ -65,7 +65,7 @@ class ProductoController extends AbstractController
             'precio' => $producto->getPrecio(),
             'existencia' => $producto->getExistencia(),
         ]);
-        return $this->json($generadorDeMensajes->getMensaje("El producto solicitado es: ", $data))
+        return $this->json($generadorDeMensajes->getMensaje("El producto solicitado es: ", $data));
     }
 
     #[Route('/{nombre}', name: 'app_usuario_edit', methods: ['PUT'])]

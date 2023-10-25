@@ -26,9 +26,13 @@ class DireccionController extends AbstractController
         $entityManager->persist($direccion);
         // Se ejecutan las consultas SQL para guardar el nuevo registro
         $entityManager->flush();
-        return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => 'Se guardo la nueva direccion del usuario', $direccion->getUsuario()
+        $data = [
+            'departamento' => $direccion->getDepartamento(),
+            'municipio' => $direccion->getMunicipio(),
+            'direccion' => $direccion->getDireccion(),
+            'usuario' => $direccion->getUsuario(),
+        ];
+        return $this->json([$generadorDeMensajes->getMensaje("Se guardo la nueva direccion del usuario", $data)
         ]);
     }
 
@@ -44,8 +48,6 @@ class DireccionController extends AbstractController
         $data = [];
         foreach ($direcciones as $direccion) {
             $data[] = [
-                'message' => $generadorDeMensajes->getMensaje(0),
-                'data' => NULL,
                 'departamento' => $direccion->getDepartamento(),
                 'municipio' => $direccion->getMunicipio(),
                 'direccion' => $direccion->getDireccion(),
@@ -53,9 +55,7 @@ class DireccionController extends AbstractController
             ];
         }
         return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => $data, 'total' => $total, 'lastPage' =>
-        $lastPage]);
+            $generadorDeMensajes->getMensaje("Las direcciones registradas son: ", $data), 'total' => $total, 'lastPage' => $lastPage]);
     }
 
     #[Route('/{usuario}', name: 'app_direccion_read_one', methods: ['GET'])]
@@ -65,14 +65,14 @@ class DireccionController extends AbstractController
         if (!$direccion) {
             return $this->json(['error' => 'No se encontro la direccion de ese usuario.'], 404);
         }
-        return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => NULL,
+        $data = ([
             'departamento' => $direccion->getDepartamento(),
             'municipio' => $direccion->getMunicipio(),
             'direccion' => $direccion->getDireccion(),
             'usuario' => $direccion->getUsuario(),
         ]);
+
+        return $this->json([$generadorDeMensajes->getMensaje("La dirección solicitada es: ", $data)]);
     }
 
     #[Route('/{usuario}', name: 'app_direccion_edit', methods: ['PUT'])]
@@ -99,9 +99,7 @@ class DireccionController extends AbstractController
         $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario' => $direccion->getUsuario()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
-        return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => 'Se actualizaron los datos de la direccion.', $data]);
+        return $this->json([$generadorDeMensajes->getMensaje("Se actualizaron los datos de la dirección", $data)]);
     }
 
     #[Route('/{usuario}', name: 'app_direccion_delete', methods: ['DELETE'])]
@@ -118,8 +116,6 @@ class DireccionController extends AbstractController
         $data = ['departamento' => $direccion->getDepartamento(), 'municipio' => $direccion->getMunicipio(), 'direccion' => $direccion->getDireccion(), 'usuario' => $direccion->getUsuario()];
         // Se aplican los cambios de la entidad en la bd
         $entityManager->flush();
-        return $this->json([
-            'message' => $generadorDeMensajes->getMensaje(0),
-            'data' => 'Se elimino la direccion.', $data]);
+        return $this->json([$generadorDeMensajes->getMensaje('Se elimino la direccion.', $data)]);
     }
 }
