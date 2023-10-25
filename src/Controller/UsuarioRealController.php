@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\UsuarioReal;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[Route('/usuarioReal', name: 'app_usuario_real')]
 class UsuarioRealController extends AbstractController
@@ -30,5 +33,15 @@ class UsuarioRealController extends AbstractController
     return $this->json([
         'message' => 'Se guardo el nuevo usuario real con id ' . $usuarioReal->getId()
     ]); 
+  }
+
+  #[Route('', name: 'app_usuario_real_read', methods: ['GET'])]
+  public function read(Security $security): JsonResponse
+  {
+    $usuarioLogueado = $security->getUser();
+    if($usuarioLogueado !== null && $usuarioLogueado instanceof UsuarioReal){
+      $usuarioLogueadoObj = ['email' => $usuarioLogueado->getEmail(), 'password' => $usuarioLogueado->getPassword()];
+      return $this->json($usuarioLogueadoObj);
+    }
   }
 }
