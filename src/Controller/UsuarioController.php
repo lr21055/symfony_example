@@ -29,6 +29,21 @@ class UsuarioController extends AbstractController
   }
 
 
+  #[Route('/mayores_a_35', name: 'app_usuario_read_all_older_than_35', methods: ['GET'])]
+  public function readAllNombreConA(EntityManagerInterface $entityManager, Request $request, GeneradorDeMensajes $generadorDeMensajes): JsonResponse
+  {
+    $usuarios = $entityManager->getRepository(Usuario::class)->findNombreConA();
+    $data = [];
+    foreach ($usuarios as $usuario) {
+      $data[] = [
+        'id' => $usuario->getId(),
+        'nombre' => $usuario->getNombre(),
+        'edad' => $usuario->getEdad(),
+      ];
+    }
+    return $this->json(['message' => $generadorDeMensajes->getMensaje(0),'data' => $data]);
+  }
+
   #[Route('', name: 'app_usuario_create', methods: ['POST'])]
   public function create(
     EntityManagerInterface $entityManager,
